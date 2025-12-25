@@ -14,6 +14,29 @@ export const footer=()=>{
     })
 }
 
+export const blockList=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/block_list',
+        params
+    })
+}
+export const transactionList=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/tx_list',
+        params
+    })
+}
+export const search=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/type_of',
+        params
+    })
+}
+
+
 export const go=({click_params, click_event})=>{
     if (!click_params) return
     const {url} = click_params

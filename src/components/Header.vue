@@ -1,225 +1,90 @@
 <template>
-  <div class="header h-100px   bg-black   flex items-center lg:px-20 px-10 justify-between">
-    <!-- logo -->
-    <img alt="" src="@/assets/logo.png">
+  <div class="px-20">
+    <el-menu
+        router
 
-    <!-- PC 菜单 -->
-    <div class="hidden md:flex items-center  gap-80px justify-between">
-      <el-dropdown   :teleported="false" @command="handleCommand">
-        <div class="text-20px text-#BCBCBC font-bold">
-          Products
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="https://www.kingnetai.io/">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px h-20px" src="@/assets/icon/1.png" />
-                KINGNET AI
-              </div>
-
-            </el-dropdown-item>
-            <el-dropdown-item command="https://xmint.games/">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px" src="@/assets/icon/2.png" />
-                XMINT Platform
-              </div>
-            </el-dropdown-item>
-            <el-dropdown-item command="http://genleap.world/">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px" src="@/assets/icon/3.png" />
-                Genleap
-
-              </div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-
-      <el-dropdown :teleported="false" @command="handleCommand">
-        <div class="text-20px text-#BCBCBC font-bold">
-          GameFi
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="https://t.me/ZaryaGameBot">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px" src="@/assets/icon/4.png" />
-                ZARYA
-              </div>
-
-
-            </el-dropdown-item>
-            <el-dropdown-item command="https://www.dappportal.io/dapps/N67b319b2bd857a6b255cf1fe">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px" src="@/assets/icon/4.png" />
-                Genleap
-
-              </div>
-
-
-            </el-dropdown-item>
-            <el-dropdown-item command="https://fishing-xm.xmint.games/">
-              <div class="flex items-center gap-10px">
-                <img class="w-20px" src="@/assets/icon/4.png" />
-                Fishing Trip
-
-              </div>
-
-
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-
-      <div @click="goAnchor('news')" class="text-20px text-#BCBCBC cursor-pointer  font-bold">News</div>
-      <div @click="goAnchor('partners')" class="text-20px cursor-pointer text-#BCBCBC font-bold">Partners</div>
-    </div>
-
-    <!-- Mobile 菜单按钮 -->
-    <div
-        class="flex md:hidden text-#BCBCBC text-24px font-bold"
-        @click="drawer = true"
+        :default-active="activeIndex"
+        class="menu"
+        mode="horizontal"
+        :ellipsis="false"
     >
-      ☰
-    </div>
+       <div class="ml-200px font-700">恺英联盟链</div>
+
+      <div class="menu-right">
+        <el-menu-item index="/">首页</el-menu-item>
+        <el-menu-item index="/block">区块浏览</el-menu-item>
+        <el-menu-item index="/transaction">交易浏览</el-menu-item>
+        <el-menu-item index="/nft">NFT</el-menu-item>
+        <div>
+          <el-autocomplete
+              v-model="headerSlotState"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入地址/交易哈希/tokenId进行搜索"
+              @select="handleSelect"
+          >
+            <template #header>{{searchType}}</template>
+          </el-autocomplete>
+        </div>
+
+      </div>
+
+    </el-menu>
   </div>
-
-  <!-- Mobile Drawer -->
-  <el-drawer
-      v-model="drawer"
-      direction="rtl"
-      size="90%"
-      class="bg-black"
-      :with-header="false"
-  >
-    <nav class=" ">
-      <!-- Products -->
-      <ul>
-        <!-- 一级 -->
-        <li class="text-20px text-#BCBCBC font-bold py-12px">
-          Products
-        </li>
-
-        <!-- 二级 -->
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('https://www.kingnetai.io/')"
-        >
-          <img class="w-20px" src="@/assets/icon/1.png" />
-          <span class="text-#BCBCBC">KINGNET AI</span>
-        </li>
-
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('https://xmint.games/')"
-        >
-          <img class="w-20px" src="@/assets/icon/2.png" />
-          <span class="text-#BCBCBC">XMINT Platform</span>
-        </li>
-
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('http://genleap.world/')"
-        >
-          <img class="w-20px" src="@/assets/icon/3.png" />
-          <span class="text-#BCBCBC">Genleap</span>
-        </li>
-      </ul>
-
-      <!-- GameFi -->
-      <ul class="mt-24px">
-        <!-- 一级 -->
-        <li class="text-20px text-#BCBCBC font-bold py-12px">
-          GameFi
-        </li>
-
-        <!-- 二级 -->
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('https://t.me/ZaryaGameBot')"
-        >
-          <img class="w-20px" src="@/assets/icon/4.png" />
-          <span class="text-#BCBCBC">ZARYA</span>
-        </li>
-
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('https://www.dappportal.io/dapps/N67b319b2bd857a6b255cf1fe')"
-        >
-          <img class="w-20px" src="@/assets/icon/4.png" />
-          <span class="text-#BCBCBC">Genleap</span>
-        </li>
-
-        <li
-            class="flex items-center gap-10px pl-16px py-10px"
-            @click="go('https://fishing-xm.xmint.games/')"
-        >
-          <img class="w-20px" src="@/assets/icon/4.png" />
-          <span class="text-#BCBCBC">Fishing Trip</span>
-        </li>
-      </ul>
-
-      <!-- 普通一级菜单 -->
-      <ul class="mt-24px">
-        <li @click="goAnchor('news')" class="text-20px text-#BCBCBC font-bold py-12px">News</li>
-        <li @click="goAnchor('partners')" class="text-20px text-#BCBCBC font-bold py-12px">Partners</li>
-      </ul>
-    </nav>
-  </el-drawer>
 </template>
+
 <script setup>
-import {router} from "@/router/index.js";
-import { ref } from 'vue'
-
-const drawer = ref(false)
-const goAnchor = (id) => {
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' })
+import {search} from "@/api/index.js";
+import {ref, watch} from 'vue'
+import {useRoute} from "vue-router";
+const headerSlotState = ref('')
+const route = useRoute()
+const activeIndex = ref(route.path)
+watch(() => route.path, (newPath) => {
+  activeIndex.value = newPath
+})
+const links = ref([])
+const createFilter = (queryString) => {
+  return (restaurant) => {
+    return (
+        restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+    )
   }
-  drawer.value = false // 移动端顺便关闭菜单
+}
+let timeout
+const handleSelect = (item) => {
+  console.log(item)
 }
 
-const handleCommand = (url) => {
-  window.open(url, '_blank')
-}
+const searchType=ref()
 
-const go = (url) => {
-  window.open(url, '_blank')
-  drawer.value = false
+const querySearchAsync = (queryString,cb) => {
+  search({
+    hash: queryString
+  }).then(res => {
+    searchType.value = res.data.type
+  })
+  // const results = queryString
+  //     ? links.value.filter(createFilter(queryString))
+  //     : links.value
+  //
+  // clearTimeout(timeout)
+  // timeout = setTimeout(() => {
+  //   cb(results)
+  // }, 3000 * Math.random())
 }
 </script>
 
-
-
 <style scoped>
-:deep(.el-dropdown__popper) {
-  --el-border-color-light: var(--el-color-primary);
-  --el-bg-color-overlay: rgba(0,0,0,0.4);
-  --el-dropdown-menuItem-hover-fill:transparent;
-  .el-dropdown-menu__item{
-    color: white;
-  }
-
-}
-:deep(.el-tooltip__trigger){
-  &:focus-visible{
-    outline: none;
-  }
+.menu {
+  display: flex;
+  align-items: center;       /* 垂直居中 */
+  justify-content: space-between; /* 左右两边留空 */
 }
 
-.mobile-title {
-  @apply text-18px font-bold py-12px border-b border-#333 cursor-pointer;
-}
-
-.mobile-sub {
-  @apply pl-12px text-14px text-#BCBCBC;
-}
-.mobile-sub > div {
-  @apply py-8px;
-}
-
-:deep(.el-drawer) {
-  background: #000;
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;  /* 控制右侧菜单间距，也可以用 padding-left 调整体距 */
+  margin-right: 200px;
 }
 </style>
