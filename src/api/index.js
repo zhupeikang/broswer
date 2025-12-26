@@ -28,10 +28,38 @@ export const transactionList=(params)=>{
         params
     })
 }
+export const transactionDetail=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/hash',
+        params
+    })
+}
+export const nftList=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/nft_list',
+        params
+    })
+}
+export const asset=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/asset',
+        params
+    })
+}
 export const search=(params)=>{
     return request({
         method:'GET',
         url:'explorer/v1/type_of',
+        params
+    })
+}
+export const indexData=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/index',
         params
     })
 }

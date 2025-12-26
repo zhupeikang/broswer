@@ -1,176 +1,35 @@
 <script setup>
-import {blockList, transactionList} from "@/api/index.js";
-import {formatTimestamp} from "@/util/index.js";
-import {CopyDocument} from "@element-plus/icons-vue";
-import {ElTag} from "element-plus";
-import {h, onMounted, ref} from "vue";
-import {UseClipboard} from '@vueuse/components'
 
-const tableData = ref([])
-const loading = ref(false);
-const currentPage = ref(1);
-const pageSize = ref(50);
-const total = ref(1);
-const getData = () => {
-  loading.value = true;
-  transactionList({
-    page: currentPage.value - 1,
-    size: pageSize.value
-  }).then(res => {
-    tableData.value = res.data.list;
-    total.value = res.data.total;
-  }).finally(() => {
-    loading.value = false;
-  })
-}
+import Table from "./Table.vue";
+import {ref} from "vue";
 
-const tableColumns = [
-  {
-    width: "400",
-    prop: 'BlockHash',
-    label: '交易哈希',
-    isLink: true,
-    isCopy: true,
-    linkCell: (row) => {
-      return `/block/${row.BlockHash}`
-    }
-  },
-  {
-    width: "400",
-    prop: 'TxType',
-    label: '交易消息类型',
-    rendCell: (row) => {
-      return {
-        render() {
-          return h(
-              ElTag,
-              {type: 'info',disableTransitions:true},
-              () => row.TxType
-          )
-        }
-      }
-    }
-  },
-  {
-    width: "400",
-    prop: 'TxStatusCode',
-    label: '状态',
-    rendCell: (row) => {
-      return {
-        render() {
-          return h(
-              ElTag,
-              {type: 'success',disableTransitions:true},
-              () => row.TxStatusCode
-          )
-        }
-      }
-    }
-
-  },
-  {
-    width: "400",
-    prop: 'BlockHeight',
-    label: '区块高度',
-    isLink: true,
-    isCopy: true,
-    linkCell: (row) => {
-      return `/block/${row.BlockHash}`
-    }
-  },
-  {
-    prop: 'Timestamp',
-    label: '时间',
-    time: true,
-  },
-];
-onMounted(() => {
-  getData();
+const tableRef = ref(null)
+defineProps({
+  blockHeight: {
+    type: String,
+    default: ''
+  }
 })
-const pageChange = (page, size) => {
-  currentPage.value = page;
-  pageSize.value = size
-  getData();
-}
-import {useRouter} from 'vue-router'
-
-const router = useRouter()
-
-function goTo(path) {
-  router.push(path)
-}
 </script>
 
 <template>
-  <div class=" ma">
-    <el-card>
-      <template #header>
-        区块总数
-      </template>
-      <el-table
-          header
-          height="70vh"
-          showOverflowTooltip
-          stripe
-          v-loading="loading"
-          :data="tableData"
-          style="width: 100%"
+  <el-card class="h-100%">
+    <Table :blockHeight="blockHeight"  ref="tableRef"></Table>
+    <template #footer>
+      <el-pagination
+          v-if="tableRef"
+          v-model:current-page="tableRef.currentPage"
+          v-model:page-size="tableRef.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="tableRef.total"
+          class="mt-4 flex justify-end"
+          layout="prev, pager, next, jumper,sizes"
+          size="large"
+          @change="tableRef.pageChange"
       >
-        <el-table-column
-            v-for="(item,index) in tableColumns"
-            :prop="item.prop"
-            :label="item.label"
-            :width="item.width"
-        >
-          <template #default="scope">
-            <component
-                v-if="item.rendCell"
-                :is="item.rendCell(scope.row)"
-            ></component>
-            <div class="flex items-center justify-start gap-2 w-full" v-else>
-              <div class="w-80%  overflow-hidden">
-                <el-link @click.prevent="goTo(item.linkCell(scope.row))" :href="item?.linkCell(scope.row)"
-                         v-if="item.isLink" type="primary">
-                  {{ scope.row[item.prop] }}
-                </el-link>
-                <span v-else-if="item.time">
-                  {{ formatTimestamp(scope.row[item.prop]) }}
-                </span>
-                <span v-else>
-                  {{ scope.row[item.prop] }}
-                </span>
-              </div>
-
-              <div v-if="item.isCopy">
-
-                <UseClipboard v-slot="{ copy, copied }" :source="scope.row[item.prop]">
-                  <el-icon class="cursor-pointer" @click="copy()" :size="16">
-                    <CircleCheckFilled v-if="copied"/>
-                    <CopyDocument v-if="!copied"/>
-                  </el-icon>
-                </UseClipboard>
-              </div>
-            </div>
-
-          </template>
-        </el-table-column>
-
-      </el-table>
-      <template #footer>
-        <el-pagination
-            size="large"
-            class="mt-4 flex justify-end"
-            v-model:page-size="pageSize"
-            :total="total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="prev, pager, next, jumper,sizes"
-            v-model:current-page="currentPage"
-            @change="pageChange"
-        >
-        </el-pagination>
-      </template>
-    </el-card>
-  </div>
+      </el-pagination>
+    </template>
+  </el-card>
 </template>
 
 <style scoped>

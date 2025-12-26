@@ -10,3 +10,13 @@ export function formatTimestamp(timestamp) {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+export const getValueByPath = (obj,path) => {
+    return path.split('.').reduce((acc, key) => acc?.[key], obj)
+}
+export const getTxId=(item)=>{
+    const index = item.findIndex(obj => obj.key === 'txId');
+    if (index !== -1) {
+        return atob(item[index].value);
+    }
+    return null;
+}

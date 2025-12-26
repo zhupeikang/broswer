@@ -12,6 +12,7 @@ function  createService() {
     instance.interceptors.response.use(response => {
         return response.data;
     }, error => {
+        console.log(error)
         return Promise.reject(error);
     });
     return instance
