@@ -10,3 +10,6 @@ export function formatTimestamp(timestamp) {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+export const getValueByPath = (obj,path) => {
+    return path.split('.').reduce((acc, key) => acc?.[key], obj)
+}

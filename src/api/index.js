@@ -28,6 +28,13 @@ export const transactionList=(params)=>{
         params
     })
 }
+export const nftList=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/nft_list',
+        params
+    })
+}
 export const search=(params)=>{
     return request({
         method:'GET',

@@ -4,15 +4,28 @@ import Header from "@/components/Header.vue";
 </script>
 
 <template>
-  <Header></Header>
-  <el-main>
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
+  <div>
+    <Header></Header>
+    <el-main  class="h-[calc(100vh-60px)] " >
+      <router-view v-slot="{ Component, route }">
+        <keep-alive>
+          <component
+              v-if="route.meta.keepAlive"
+              :is="Component"
+              :key="route.name"
+          />
+        </keep-alive>
 
-  </el-main>
+        <component
+            v-if="!route.meta.keepAlive"
+            :is="Component"
+            :key="route.fullPath"
+        />
+      </router-view>
+
+    </el-main>
+  </div>
+
 </template>
 
 <style scoped>
