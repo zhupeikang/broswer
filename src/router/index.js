@@ -54,6 +54,14 @@ const routes = [
             keepAlive: false
         }
     },
+    {
+        path: '/address/:hash',
+        component: () => import('@/pages/ADDRESS/Index.vue'),
+        name: 'AddressDetail',
+        meta: {
+            keepAlive: false
+        }
+    },
 ]
 
 export const router = createRouter({

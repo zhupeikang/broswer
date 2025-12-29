@@ -73,7 +73,7 @@ const handleSelect = (item) => {
     case 'transaction':
       url = `/transaction/${item.value}`
       break
-    case 'address':
+    case 'account':
       url = `/address/${item.value}`
       break
     case 'nft':

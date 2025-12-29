@@ -39,12 +39,10 @@ const displayValue = computed(() =>
           :href="link"
           @click.prevent="$emit('go', link)"
       >
-        {{ displayValue }}
+        <span class="truncate max-w-[300px]">{{ cellValue }}</span>
       </el-link>
 
-      <span v-else>
-        {{ displayValue }}
-      </span>
+      <span v-else class="truncate max-w-[200px]">{{ cellValue }}</span>
     </div>
 
     <UseClipboard

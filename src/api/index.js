@@ -49,6 +49,13 @@ export const asset=(params)=>{
         params
     })
 }
+export const account=(params)=>{
+    return request({
+        method:'GET',
+        url:'explorer/v1/account',
+        params
+    })
+}
 export const search=(params)=>{
     return request({
         method:'GET',

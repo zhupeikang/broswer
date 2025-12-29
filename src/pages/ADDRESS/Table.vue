@@ -1,10 +1,10 @@
 <script setup>
-import {blockList, nftList} from "@/api/index.js";
+import {account} from "@/api/index.js";
 import CellRenderer from "@/components/CellRenderer.vue";
 import TableCommon from "@/components/TableCommon.vue";
-import {formatTimestamp, getTxId} from "@/util/index.js";
-import {ElTag} from "element-plus";
-import {h, onMounted, ref} from "vue";
+import {ref, watch} from "vue";
+import {useRoute} from "vue-router";
+
 const tableData = ref([])
 const loading = ref(false);
 const currentPage = ref(1);
@@ -12,12 +12,13 @@ const pageSize = ref(50);
 const total = ref(0);
 const getData = () => {
   loading.value = true;
-  nftList({
-    page: currentPage.value ,
-    size: pageSize.value
+  account({
+    page: currentPage.value,
+    size: pageSize.value,
+    hash:hash.value
   }).then(res => {
-    tableData.value = res.data.data;
-    total.value = res.data.total;
+    tableData.value = res.data.list;
+    total.value = res.data.count;
   }).finally(() => {
     loading.value = false;
   })
@@ -30,64 +31,48 @@ const tableColumns = [
     label: 'NFT名称',
     isLink: true,
     linkCell: (row) => {
-      return `/nft/${row.token_id}`
+      return `/nft/${row.tokenId}`
     },
     rendCell: CellRenderer,
   },
   {
-    prop: 'token_id',
+    prop: 'tokenId',
     label: 'NFT ID',
     width: 400,
     isLink: true,
     isCopy: true,
     linkCell: (row) => {
-      return `/nft/${row.token_id}`
+      return `/nft/${row.tokenId}`
     },
     rendCell: CellRenderer,
   },
   {
-    prop: 'contract.chain_contract_id',
+    prop: 'contractId',
     label: '合约ID',
     rendCell: CellRenderer,
   },
   {
-    prop: 'tx_id',
+    prop: 'txId',
     label: '交易hash',
     isLink: true,
     isCopy: true,
     rendCell: CellRenderer,
     linkCell: (row) => {
-      return `/transaction/${row.tx_id}`
+      return `/transaction/${row.txId}`
     },
   },
   {
-    prop: 'user_wallet.address',
-    label: '拥有者',
-    isLink: true,
-    isCopy: true,
-    linkCell: (row) => {
-      return `/address/${row.user_wallet.address}`
-    },
+    prop: 'createAt',
+    label: '创建时间',
     rendCell: CellRenderer,
   },
-  {
-    prop: 'minted_at',
-    label: '创建时间',
-    time: true,
-    rendCell: (row) => {
-      return {
-        render() {
-          return h(
-              () => formatTimestamp(row.minted_at)
-          )
-        }
-      }
-    }
-  },
 ];
-onMounted(() => {
-  getData();
-})
+const route = useRoute()
+const hash = ref(route.params.hash)
+
+watch(hash, () => {
+  getData()
+}, {immediate: true})
 const pageChange = (page, size) => {
   currentPage.value = page;
   pageSize.value = size

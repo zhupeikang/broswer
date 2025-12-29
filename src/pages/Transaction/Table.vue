@@ -2,7 +2,7 @@
 import {transactionList} from "@/api/index.js";
 import CellRenderer from "@/components/CellRenderer.vue";
 import TableCommon from "@/components/TableCommon.vue";
-import {getTxId} from "@/util/index.js";
+import {formatTimestamp, getTxId} from "@/util/index.js";
 import {ElTag} from "element-plus";
 import {h, onMounted, ref, useAttrs} from "vue";
 import {useRouter} from 'vue-router'
@@ -90,7 +90,16 @@ const tableColumns = [
     prop: 'Timestamp',
     label: '时间',
     time: true,
-    rendCell: CellRenderer,
+    rendCell: (row) => {
+      return {
+        render() {
+          return h(
+              () => formatTimestamp(row.Timestamp)
+          )
+        }
+      }
+    }
+
   },
 ];
 onMounted(() => {

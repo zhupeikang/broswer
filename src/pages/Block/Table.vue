@@ -2,7 +2,8 @@
 import {blockList} from "@/api/index.js";
 import CellRenderer from "@/components/CellRenderer.vue";
 import TableCommon from "@/components/TableCommon.vue";
-import {onMounted, ref} from "vue";
+import {formatTimestamp} from "@/util/index.js";
+import {h, onMounted, ref} from "vue";
 
 const tableData = ref([])
 const loading = ref(false);
@@ -61,7 +62,16 @@ const tableColumns = [
     prop: 'Timestamp',
     label: '出块时间',
     time: true,
-    rendCell: CellRenderer,
+    rendCell: (row) => {
+      return {
+        render() {
+          return h(
+              () => formatTimestamp(row.Timestamp)
+          )
+        }
+      }
+    }
+
 
   },
 ];

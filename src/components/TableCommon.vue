@@ -36,11 +36,13 @@ import CellWrapper from "@/components/CellWrapper.vue";
         :label="item.label"
         :prop="item.prop"
         :width="item.width"
+        v-bind="{...item}"
     >
       <template #default="scope">
         <CellWrapper
             :row="scope.row"
             :item="item"
+
         />
       </template>
     </el-table-column>
